@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kezza Noguerra | Messenger Automation Architect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Space+Grotesque:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Space Grotesque', 'sans-serif'],
+                        montserrat: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        kn: {
+                            teal: '#002626',
+                            dark: '#001212',
+                            gold: '#F3C63F',
+                            goldDark: '#B89014',
+                            white: '#FFFFFF',
+                            muted: '#94A3B8',
+                            glass: 'rgba(0, 38, 38, 0.45)',
+                            card: 'rgba(255, 255, 255, 0.03)'
+                        }
+                    },
+                    boxShadow: {
+                        'premium': '0 20px 40px -15px rgba(0,0,0,0.5)',
+                        'gold-glow': '0 0 25px rgba(243, 198, 63, 0.15)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Space Grotesque', sans-serif;
+            color: #F1F5F9;
+        }
+        
+        /* Premium Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #001212;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #F3C63F;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #B89014;
+        }
+
+        /* Glassmorphism Classes */
+        .glass-panel {
+            background: rgba(0, 38, 38, 0.45);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(243, 198, 63, 0.15);
+        }
+
+        .glass-panel-light {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Modal Transitions */
+        .modal-overlay {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            transform: scale(0.95) translateY(30px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        /* Input highlight styles */
+        .form-input {
+            width: 100%;
+            padding: 0.85rem 1.25rem;
+            border-radius: 8px;
+            border: 1px solid rgba(243, 198, 63, 0.2);
+            background-color: rgba(0, 18, 18, 0.6);
+            transition: all 0.3s ease;
+            color: #FFFFFF;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #F3C63F;
+            background-color: rgba(0, 18, 18, 0.9);
+            box-shadow: 0 0 15px rgba(243, 198, 63, 0.25);
+        }
+
+        /* Ambient glowing background orbs */
+        .glow-orb {
+            filter: blur(130px);
+            pointer-events: none;
+            opacity: 0.12;
+        }
+
+        /* Geometric Background Line Grid */
+        .bg-grid-lines {
+            background-size: 60px 60px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-kn-gold selection:text-kn-dark overflow-x-hidden bg-transparent">
+
+    <!-- Fixed Background Image & Overlay Layer -->
+    <div class="fixed inset-0 w-full h-full z-[-1] bg-[#001212]">
+        <!-- High-end luxury villa background -->
+        <div class="absolute inset-0 bg-cover bg-center filter brightness-[0.4]" style="background-image: url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1920');"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-[#001212]/90 via-[#001212]/50 to-[#001212]/95"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[#001212]/95 via-transparent to-[#001212]/90"></div>
+        <!-- Ambient Grid lines -->
+        <div class="absolute inset-0 bg-grid-lines"></div>
+    </div>
+
+    <!-- Ambient blur lights (Teal & Gold hues) -->
+    <div class="fixed top-[10%] left-[-10%] w-[500px] h-[500px] bg-kn-gold rounded-full glow-orb z-0"></div>
+    <div class="fixed top-[45%] right-[-10%] w-[600px] h-[600px] bg-kn-gold rounded-full glow-orb z-0"></div>
+    <div class="fixed bottom-[5%] left-[15%] w-[450px] h-[450px] bg-kn-gold rounded-full glow-orb z-0"></div>
+
+    <!-- NAVIGATION HEADER -->
+    <nav class="fixed w-full bg-[#001212]/75 backdrop-blur-md z-40 border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-24 items-center">
+                <!-- Branding Area -->
+                <a href="#hero" class="flex items-center gap-4 cursor-pointer text-decoration-none">
+                    <div class="flex items-center justify-center w-14 h-14 rounded border border-kn-gold/30 bg-gradient-to-br from-kn-teal to-kn-dark shadow-lg">
+                        <img src="logo v2 no bg.png" alt="Kezza Noguerra Logo" class="w-10 h-10 object-contain" onerror="this.style.display='none'">
+                    </div>
+                    <div class="flex flex-col border-l border-white/10 pl-4">
+                        <span class="font-montserrat font-black text-sm tracking-[0.25em] text-white uppercase">Kezza Noguerra</span>
+                        <span class="text-[0.65rem] text-kn-gold uppercase tracking-widest font-semibold">Systems Architect</span>
+                    </div>
+                </a>
+                
+                <!-- Nav Links -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#hero" class="text-xs uppercase tracking-widest text-gray-300 hover:text-kn-gold transition font-bold">Main</a>
+                    <a href="#about" class="text-xs uppercase tracking-widest text-gray-300 hover:text-kn-gold transition font-bold">About</a>
+                    <a href="#portfolio" class="text-xs uppercase tracking-widest text-gray-300 hover:text-kn-gold transition font-bold">Experience</a>
+                    <a href="#values" class="text-xs uppercase tracking-widest text-gray-300 hover:text-kn-gold transition font-bold">Core Pillars</a>
+                    <a href="#inquire" class="text-xs uppercase tracking-widest text-gray-300 hover:text-kn-gold transition font-bold">Inquire</a>
+                    <button class="open-modal-btn bg-gradient-to-r from-kn-gold to-kn-goldDark text-kn-dark px-6 py-3.5 rounded text-xs uppercase tracking-widest font-black hover:brightness-110 active:scale-95 transition shadow-lg shadow-kn-gold/20">
+                        Initiate Connection
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section id="hero" class="relative min-h-screen pt-36 pb-20 flex items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Left Hand Text Area -->
+                <div class="lg:col-span-7 text-left space-y-8">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border border-white/10 text-kn-gold text-xs font-bold uppercase tracking-[0.25em]">
+                        <span class="w-2 h-2 rounded-full bg-kn-gold animate-ping"></span>
+                        Architecting Scale
+                    </div>
+                    
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-montserrat font-black tracking-tight text-white leading-[1.1] uppercase">
+                        Engineering Autonomous<br/>Systems for the <span class="text-transparent bg-clip-text bg-gradient-to-r from-kn-gold via-amber-200 to-white">Luxury Hospitality</span> Sector
+                    </h1>
+                    
+                    <p class="text-xl lg:text-2xl font-medium text-slate-300 leading-relaxed">
+                        Instant FAQ automation. Precise condition mapping. Closed-loop direct bookings.
+                    </p>
+
+                    <div class="relative py-6 pl-6 border-l-2 border-kn-gold bg-white/[0.01] rounded-r-lg">
+                        <p class="text-base sm:text-lg text-gray-300 leading-relaxed font-light italic">
+                            "I do not just build general chat replies, nor do I operate in inbox chaos. I practice <strong class="font-semibold text-white">pragmatic systems engineering</strong>—translating mathematical logic trees into seamless conversational guest journeys that bypass OTA commission leaks."
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                        <button class="open-modal-btn bg-gradient-to-r from-kn-gold to-kn-goldDark text-kn-dark px-8 py-4.5 rounded text-sm uppercase tracking-widest font-black hover:brightness-110 transition shadow-2xl shadow-kn-gold/20 flex items-center justify-center gap-3">
+                            Request System Audit
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                        <a href="#about" class="glass-panel text-white hover:bg-white/10 px-8 py-4.5 rounded text-sm uppercase tracking-widest font-black transition flex items-center justify-center gap-2">
+                            Explore Capabilities
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right Hand Visual Card Area -->
+                <div class="lg:col-span-5">
+                    <div class="glass-panel p-8 rounded-2xl shadow-premium border border-white/10 relative overflow-hidden group hover:border-kn-gold/30 transition-all duration-500">
+                        <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-kn-gold to-transparent"></div>
+                        
+                        <div class="flex items-center justify-between mb-8">
+                            <span class="text-xs uppercase tracking-widest text-kn-gold font-bold">System Containment Metrics</span>
+                            <div class="px-2.5 py-1 rounded bg-kn-gold/10 text-[10px] text-kn-gold font-bold uppercase tracking-wider">Operational Target</div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <!-- Progress Bar 1 -->
+                            <div>
+                                <div class="flex justify-between text-xs uppercase tracking-widest mb-1.5 font-bold">
+                                    <span class="text-gray-400">Response Containment Rate</span>
+                                    <span class="text-kn-gold">85%</span>
+                                </div>
+                                <div class="w-full bg-white/5 h-2 rounded-full overflow-hidden">
+                                    <div class="bg-gradient-to-r from-kn-gold to-white h-full rounded-full transition-all duration-1000" style="width: 85%"></div>
+                                </div>
+                            </div>
+                            <!-- Progress Bar 2 -->
+                            <div>
+                                <div class="flex justify-between text-xs uppercase tracking-widest mb-1.5 font-bold">
+                                    <span class="text-gray-400">Response Latency Reduction</span>
+                                    <span class="text-kn-gold">&lt; 1 Second</span>
+                                </div>
+                                <div class="w-full bg-white/5 h-2 rounded-full overflow-hidden">
+                                    <div class="bg-gradient-to-r from-kn-gold to-white h-full rounded-full transition-all duration-1000" style="width: 98%"></div>
+                                </div>
+                            </div>
+                            <!-- Progress Bar 3 -->
+                            <div>
+                                <div class="flex justify-between text-xs uppercase tracking-widest mb-1.5 font-bold">
+                                    <span class="text-gray-400">Direct Revenue Retention</span>
+                                    <span class="text-kn-gold">100% Commission-Free</span>
+                                </div>
+                                <div class="w-full bg-white/5 h-2 rounded-full overflow-hidden">
+                                    <div class="bg-gradient-to-r from-kn-gold to-white h-full rounded-full transition-all duration-1000" style="width: 100%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 pt-6 border-t border-white/5 flex justify-between items-center text-xs text-slate-400">
+                            <span>Designed for Luxury Resorts</span>
+                            <span class="text-white font-bold underline cursor-pointer hover:text-kn-gold transition open-modal-btn">Audit Your Pipeline</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- USP MIDDLE BANNER -->
+    <section class="py-16 sm:py-20 bg-gradient-to-r from-kn-gold/90 to-kn-goldDark/90 backdrop-blur-sm relative z-20 border-y border-white/10 shadow-[0_0_40px_rgba(243,198,63,0.15)]">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 space-y-6">
+            <div class="inline-flex items-center justify-center gap-2 px-4 py-1.5 rounded-full bg-kn-dark/10 text-kn-dark text-[10px] font-black uppercase tracking-widest border border-kn-dark/10">
+                The Guest-Relay Solution
+            </div>
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-montserrat font-black text-kn-dark uppercase tracking-tight leading-tight">
+                Architecting direct booking channels designed to convert <span class="text-white drop-shadow-md">guest inquiries instantly</span>.
+            </h2>
+            <p class="text-sm sm:text-base font-bold uppercase tracking-[0.15em] text-kn-dark/80">
+                Eliminating manual response bottlenecks through mathematical system design.
+            </p>
+        </div>
+    </section>
+
+    <!-- EXECUTIVE BACKGROUND & ABOUT SECTION -->
+    <section id="about" class="py-28 bg-kn-dark/40 backdrop-blur-sm border-y border-white/5 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                
+                <!-- Left Hand Visual: Headshot image with gold lighting border -->
+                <div class="relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-kn-gold/20 to-transparent rounded-2xl filter blur-xl transform translate-x-3 translate-y-3"></div>
+                    <div class="relative glass-panel p-3 rounded-2xl border border-white/10">
+                        <img src="Gemini_Generated_Image_povj0tpovj0tpovj.png" 
+                             alt="Kezza Noguerra - Lead Automation Architect" 
+                             class="w-full h-auto rounded-xl object-cover filter brightness-[1.02] contrast-[1.02] shadow-2xl">
+                        <!-- Headshot Overlay Badge -->
+                        <div class="absolute bottom-8 left-8 right-8 glass-panel p-5 rounded border border-white/20 shadow-xl">
+                            <h3 class="text-white font-montserrat font-black text-sm uppercase tracking-widest">Kezza Noguerra</h3>
+                            <p class="text-xs text-kn-gold uppercase tracking-widest mt-1">Lead Automation Architect</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Hand Context: Branding narrative -->
+                <div class="space-y-8">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-kn-gold/10 text-kn-gold text-[11px] font-bold uppercase tracking-widest">
+                        Systemic Competence
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl font-montserrat font-black text-white uppercase tracking-tight">
+                        Connecting Guests Through Precise Algorithmic Design
+                    </h2>
+                    <p class="text-gray-300 font-light leading-relaxed">
+                        I specialize in taking unstructured, chaotic message boards and converting them into high-conversion digital ecosystems. Leveraging an educational foundation in Mathematics and official Meta-channel expertise, I program conditional "if-then" flows that secure guest reservations without human labor.
+                    </p>
+                    <div class="grid sm:grid-cols-2 gap-6">
+                        <div class="glass-panel p-5 rounded border border-white/5">
+                            <h4 class="text-kn-gold font-bold text-xs uppercase tracking-widest mb-1">Mathematical Accuracy</h4>
+                            <p class="text-xs text-gray-300 font-light">Custom branching condition blocks ensure paths resolve logically. Guests never experience confusing, loop-prone dead ends.</p>
+                        </div>
+                        <div class="glass-panel p-5 rounded border border-white/5">
+                            <h4 class="text-kn-gold font-bold text-xs uppercase tracking-widest mb-1">Direct PMS Integration</h4>
+                            <p class="text-xs text-gray-300 font-light">Connecting social media discovery triggers seamlessly with core check-in tools and property booking databases.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- OPERATIONAL PORTFOLIO / WORK HISTORY SECTION -->
+    <section id="portfolio" class="py-28 bg-kn-dark/20 backdrop-blur-sm border-y border-white/5 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-sm font-black uppercase tracking-[0.25em] text-kn-gold">Operational Experience</span>
+                <h2 class="text-3xl sm:text-4xl font-montserrat font-black text-white uppercase mt-3 tracking-tight">Strategic Leadership & Execution</h2>
+                <p class="text-gray-300 text-sm tracking-widest uppercase mt-2">A proven track record in operations management, logic mapping, and file validation.</p>
+            </div>
+
+            <div class="relative border-l border-white/10 ml-4 md:ml-0 md:border-l-0">
+                <!-- Vertical Line for Desktop Timeline -->
+                <div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-white/10 transform -translate-x-1/2"></div>
+                
+                <div class="space-y-12">
+                    
+                    <!-- Timeline Card 1: Daniz Cottages -->
+                    <div class="relative flex flex-col md:flex-row justify-between items-center w-full">
+                        <div class="hidden md:block w-5/12 text-right pr-8">
+                            <h3 class="text-lg font-montserrat font-black text-white uppercase tracking-widest">Daniz Cottages Rental</h3>
+                            <p class="text-kn-gold text-xs font-bold uppercase tracking-widest mt-1">General VA & Messaging Specialist</p>
+                            <p class="text-gray-400 text-[10px] uppercase tracking-widest mt-1">Jan 2023 – May 2026</p>
+                        </div>
+                        <div class="absolute left-[-5px] md:left-1/2 w-2.5 h-2.5 bg-kn-gold rounded-full transform md:-translate-x-1/2 mt-1.5 md:mt-0 shadow-[0_0_10px_rgba(243,198,63,0.5)] z-10"></div>
+                        <div class="w-full md:w-5/12 pl-8">
+                            <div class="md:hidden mb-3">
+                                <h3 class="text-lg font-montserrat font-black text-white uppercase tracking-widest">Daniz Cottages Rental</h3>
+                                <p class="text-kn-gold text-xs font-bold uppercase tracking-widest mt-1">General VA & Messaging Specialist</p>
+                                <p class="text-gray-400 text-[10px] uppercase tracking-widest mt-1">2023 – 2026</p>
+                            </div>
+                            <div class="glass-panel p-6 rounded-lg border border-white/5 hover:border-kn-gold/30 transition-all duration-300 text-sm text-gray-200 font-light space-y-3">
+                                <p>• Engineered custom automated FAQ message sequences inside Meta Business Suite, removing inquiry bottlenecks.</p>
+                                <p>• Audited data metrics and managed regular occupancy and data reports for compliance with local Department of Tourism parameters.</p>
+                                <p>• Verified financial and deposit details across digital processors to coordinate secure direct reservation transfers.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Card 2: Volunteer Network -->
+                    <div class="relative flex flex-col md:flex-row-reverse justify-between items-center w-full">
+                        <div class="hidden md:block w-5/12 text-left pl-8">
+                            <h3 class="text-lg font-montserrat font-black text-white uppercase tracking-widest">Construction Volunteer Network</h3>
+                            <p class="text-kn-gold text-xs font-bold uppercase tracking-widest mt-1">Safety Tracking & Compliance Specialist</p>
+                            <p class="text-gray-400 text-[10px] uppercase tracking-widest mt-1">March 2024 – Present</p>
+                        </div>
+                        <div class="absolute left-[-5px] md:left-1/2 w-2.5 h-2.5 bg-kn-gold rounded-full transform md:-translate-x-1/2 mt-1.5 md:mt-0 shadow-[0_0_10px_rgba(243,198,63,0.5)] z-10"></div>
+                        <div class="w-full md:w-5/12 pl-8 md:pr-8 md:pl-0">
+                            <div class="md:hidden mb-3">
+                                <h3 class="text-lg font-montserrat font-black text-white uppercase tracking-widest">Construction Volunteer Network</h3>
+                                <p class="text-kn-gold text-xs font-bold uppercase tracking-widest mt-1">Safety Tracking & Compliance Specialist</p>
+                                <p class="text-gray-400 text-[10px] uppercase tracking-widest mt-1">2024 – Present</p>
+                            </div>
+                            <div class="glass-panel p-6 rounded-lg border border-white/5 hover:border-kn-gold/30 transition-all duration-300 text-sm text-gray-200 font-light space-y-3">
+                                <p>• Audited remote project folders to verify full validation of necessary tracking records and compliance data.</p>
+                                <p>• Analyzed regional site updates to isolate potential security bottlenecks or flag high-priority risk concerns.</p>
+                                <p>• Drafted operational status reports and safety notifications to coordinate standard guidelines across distributed sites.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Card 3: Academic Services -->
+                    <div class="relative flex flex-col md:flex-row justify-between items-center w-full">
+                        <div class="hidden md:block w-5/12 text-right pr-8">
+                            <h3 class="text-lg font-montserrat font-black text-white uppercase tracking-widest">Institutional Academic Services</h3>
+                            <p class="text-kn-gold text-xs font-bold uppercase tracking-widest mt-1">Curriculum & Logic Blueprint Lead</p>
+                            <p class="text-gray-400 text-[10px] uppercase tracking-widest mt-1">June 2014 – Feb 2021</p>
+                        </div>
+                        <div class="absolute left-[-5px] md:left-1/2 w-2.5 h-2.5 bg-kn-gold rounded-full transform md:-translate-x-1/2 mt-1.5 md:mt-0 shadow-[0_0_10px_rgba(243,198,63,0.5)] z-10"></div>
+                        <div class="w-full md:w-5/12 pl-8">
+                            <div class="md:hidden mb-3">
+                                <h3 class="text-lg font-montserrat font-black text-white uppercase tracking-widest">Institutional Academic Services</h3>
+                                <p class="text-kn-gold text-xs font-bold uppercase tracking-widest mt-1">Curriculum & Logic Blueprint Lead</p>
+                                <p class="text-gray-400 text-[10px] uppercase tracking-widest mt-1">2014 – 2021</p>
+                            </div>
+                            <div class="glass-panel p-6 rounded-lg border border-white/5 hover:border-kn-gold/30 transition-all duration-300 text-sm text-gray-200 font-light space-y-3">
+                                <p>• Built curriculum structures and structured logical training documents for complex department tasks.</p>
+                                <p>• Directed lesson mapping and coordinated projects across multiple distributed operations channels.</p>
+                                <p>• Formulated logic blueprints that translated abstract operations goals into repeatable training tasks.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- THE TRIAD VALUE SYNTHESIS -->
+    <section id="values" class="py-28 relative bg-[#001212]/40 backdrop-blur-sm border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-3xl mx-auto mb-20">
+                <span class="text-sm font-black uppercase tracking-[0.25em] text-kn-gold">The Triad Model</span>
+                <h2 class="text-4xl font-montserrat font-black text-white uppercase mt-3 tracking-tight">Our Core Design Pillars</h2>
+                <p class="text-gray-300 text-sm tracking-widest uppercase mt-2">Engineered to elevate boutique brand margin performance</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Value Card 1 -->
+                <div class="glass-panel p-8 rounded-xl border border-white/5 hover:border-kn-gold/30 transition-all duration-300 group flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-8">
+                            <span class="text-5xl font-black text-white/10 group-hover:text-kn-gold/30 transition duration-300">01</span>
+                            <div class="w-12 h-12 rounded bg-kn-gold/20 flex items-center justify-center text-kn-gold">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-montserrat font-black uppercase tracking-widest text-white mb-3">Scale & Audience Reach</h3>
+                        <p class="text-xs uppercase text-kn-gold tracking-widest font-bold mb-4">(Zuckerberg Alignment)</p>
+                        <p class="text-sm text-gray-300 leading-relaxed font-light">We construct instant Comment-to-DM triggers and structural marketing scripts built to capture visual attention and scale user interactions overnight.</p>
+                    </div>
+                </div>
+
+                <!-- Value Card 2 -->
+                <div class="glass-panel p-8 rounded-xl border border-white/5 hover:border-kn-gold/30 transition-all duration-300 group flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-8">
+                            <span class="text-5xl font-black text-white/10 group-hover:text-kn-gold/30 transition duration-300">02</span>
+                            <div class="w-12 h-12 rounded bg-kn-gold/20 flex items-center justify-center text-kn-gold">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path></svg>
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-montserrat font-black uppercase tracking-widest text-white mb-3">Algorithmic Precision</h3>
+                        <p class="text-xs uppercase text-kn-gold tracking-widest font-bold mb-4">(Zhang Alignment)</p>
+                        <p class="text-sm text-gray-300 leading-relaxed font-light">Integrating deterministic conditional systems with frictionless transaction flows to automatically direct active traffic to high-margin direct-booking checkouts.</p>
+                    </div>
+                </div>
+
+                <!-- Value Card 3 -->
+                <div class="glass-panel p-8 rounded-xl border border-white/5 hover:border-kn-gold/30 transition-all duration-300 group flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-8">
+                            <span class="text-5xl font-black text-white/10 group-hover:text-kn-gold/30 transition duration-300">03</span>
+                            <div class="w-12 h-12 rounded bg-kn-gold/20 flex items-center justify-center text-kn-gold">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                            </div>
+                        </div>
+                        <h3 class="text-lg font-montserrat font-black uppercase tracking-widest text-white mb-3">Visual Craft & Esthetics</h3>
+                        <p class="text-xs uppercase text-kn-gold tracking-widest font-bold mb-4">(Systrom Alignment)</p>
+                        <p class="text-sm text-gray-300 leading-relaxed font-light">We execute on-brand messaging architectures featuring premium styling, visual carousels, and elegant typography to match the standards of luxury travelers.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BRAND SPECIFICATION / DESIGN BLUEPRINT -->
+    <section id="blueprint" class="py-28 bg-[#001212]/40 backdrop-blur-sm border-t border-white/5 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="glass-panel p-10 lg:p-16 rounded-2xl border border-white/10 relative overflow-hidden">
+                <div class="absolute -right-16 -top-16 w-64 h-64 bg-kn-gold/20 rounded-full blur-3xl"></div>
+                
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    
+                    <div class="space-y-6">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-white/5 text-kn-gold text-[10px] font-bold uppercase tracking-widest border border-white/10">
+                            Core Brand Specification
+                        </div>
+                        <h2 class="text-3xl lg:text-4xl font-montserrat font-black text-white uppercase tracking-tight leading-none">
+                            The Kezza Design System
+                        </h2>
+                        <p class="text-gray-200 font-light leading-relaxed">
+                            This digital showcase is engineered to reflect high-end structural professionalism. The primary design parameters, color contrast grids, and typography structures are aligned directly with the specifications in the architectural brief.
+                        </p>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-3 text-sm text-gray-200">
+                                <svg class="w-4 h-4 text-kn-gold" fill="currentColor" viewBox="0 0 20 20"><path d="M10 .25a.75.75 0 0 1 .75.75v14.06l3.53-3.53a.75.75 0 1 1 1.06 1.06l-4.81 4.81a.75.75 0 0 1-1.06 0L4.66 12.59a.75.75 0 1 1 1.06-1.06l3.53 3.53V1a.75.75 0 0 1 .75-.75z"/></svg>
+                                <span>Verbatim compliance with brand guidelines</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-gray-200">
+                                <svg class="w-4 h-4 text-kn-gold" fill="currentColor" viewBox="0 0 20 20"><path d="M10 .25a.75.75 0 0 1 .75.75v14.06l3.53-3.53a.75.75 0 1 1 1.06 1.06l-4.81 4.81a.75.75 0 0 1-1.06 0L4.66 12.59a.75.75 0 1 1 1.06-1.06l3.53 3.53V1a.75.75 0 0 1 .75-.75z"/></svg>
+                                <span>Engineered to meet high-conversion hospitality metrics</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side: Beautiful stylized representation of the Task structure using visual headshot with graphics -->
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-gradient-to-br from-kn-gold/10 to-transparent rounded-2xl filter blur-xl transform translate-x-3 translate-y-3"></div>
+                        <div class="relative glass-panel p-2 rounded-xl border border-white/10 overflow-hidden">
+                            <img src="Gemini_Generated_Image_s6qs7vs6qs7vs6qs.png" alt="Systems Automation Strategy" class="w-full h-auto rounded-lg object-cover brightness-[1.05] contrast-[1.05]">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- IN-PAGE INQUIRE SECTION (REPLACES CTA BANNER AND ALIGNS FORM FIELDS WITH MODAL) -->
+    <section id="inquire" class="py-28 bg-[#001212]/40 backdrop-blur-sm border-t border-white/5 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Left Hand Details -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-white/5 text-kn-gold text-[10px] font-bold uppercase tracking-widest border border-white/10">
+                        Secure Direct Margins
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl font-montserrat font-black text-white uppercase tracking-tight leading-none">
+                        Initiate Operational Audit
+                    </h2>
+                    <p class="text-gray-300 font-light leading-relaxed">
+                        Ready to deploy high-precision automation across your luxury hospitality portfolio? Fill out the parameters to request a secure systems evaluation and map your architecture timeline blueprint.
+                    </p>
+                    
+                    <div class="space-y-4 pt-4">
+                        <div class="flex items-center gap-4 text-sm text-gray-200">
+                            <div class="w-10 h-10 rounded-lg bg-kn-gold/10 flex items-center justify-center text-kn-gold border border-kn-gold/20">
+                                <i class="fa-solid fa-envelope text-lg"></i>
+                            </div>
+                            <span class="font-medium">keznoguerra@gmail.com</span>
+                        </div>
+                        <div class="flex items-center gap-4 text-sm text-gray-200">
+                            <div class="w-10 h-10 rounded-lg bg-kn-gold/10 flex items-center justify-center text-kn-gold border border-kn-gold/20">
+                                <i class="fa-brands fa-linkedin text-lg"></i>
+                            </div>
+                            <span class="font-medium">linkedin.com/in/kezzan</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Hand In-Page Form (Directly matching Modal Inputs) -->
+                <div class="lg:col-span-7">
+                    <div class="glass-panel p-8 sm:p-10 rounded-2xl border border-white/10 relative overflow-hidden">
+                        <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-kn-gold via-white to-kn-gold"></div>
+                        
+                        <form id="inpageConsultationForm" class="space-y-5">
+                            
+                            <!-- Name -->
+                            <div>
+                                <label for="inpageFirstName" class="block text-[10px] font-black uppercase tracking-widest text-kn-gold mb-1.5">Name</label>
+                                <input type="text" id="inpageFirstName" name="firstName" required placeholder="John Doe" class="form-input text-sm">
+                            </div>
+
+                            <!-- Client Company/Brand -->
+                            <div>
+                                <label for="inpageDesignation" class="block text-[10px] font-black uppercase tracking-widest text-kn-gold mb-1.5">Company / Brand</label>
+                                <input type="text" id="inpageDesignation" name="designation" required placeholder="e.g. Grand Oasis Resort / Boutique Stay Portfolio" class="form-input text-sm">
+                            </div>
+
+                            <!-- Market Location Country Selector -->
+                            <div>
+                                <label for="inpageNationality" class="block text-[10px] font-black uppercase tracking-widest text-kn-gold mb-1.5">Location</label>
+                                <select id="inpageNationality" name="nationality" required class="form-input text-sm text-gray-300 bg-transparent">
+                                    <option value="" disabled selected class="bg-[#001212]">Select Property Location...</option>
+                                    <option value="US" class="bg-[#001212]">United States</option>
+                                    <option value="UK" class="bg-[#001212]">United Kingdom</option>
+                                    <option value="PH" class="bg-[#001212]">Philippines</option>
+                                    <option value="SG" class="bg-[#001212]">Singapore</option>
+                                    <option value="AU" class="bg-[#001212]">Australia</option>
+                                    <option value="CA" class="bg-[#001212]">Canada</option>
+                                    <option value="AE" class="bg-[#001212]">United Arab Emirates</option>
+                                    <option value="DE" class="bg-[#001212]">Germany</option>
+                                    <option value="Other" class="bg-[#001212]">Other Region</option>
+                                </select>
+                            </div>
+
+                            <!-- Email & Phone Number row columns split -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                <div>
+                                    <label for="inpageEmail" class="block text-[10px] font-black uppercase tracking-widest text-kn-gold mb-1.5">Email</label>
+                                    <input type="email" id="inpageEmail" name="email" required placeholder="stay@yourbrand.com" class="form-input text-sm">
+                                </div>
+
+                                <div>
+                                    <label for="inpageMobile" class="block text-[10px] font-black uppercase tracking-widest text-kn-gold mb-1.5">Phone Number</label>
+                                    <input type="tel" id="inpageMobile" name="mobile" required placeholder="+1 (555) 000-0000" class="form-input text-sm">
+                                </div>
+                            </div>
+
+                            <!-- Optional Message/Friction Points -->
+                            <div>
+                                <label for="inpageMessage" class="block text-[10px] font-black uppercase tracking-widest text-kn-gold mb-1.5">Current System Friction Points</label>
+                                <textarea id="inpageMessage" name="message" rows="3" placeholder="What are your current repetitive inbox bottlenecks?" class="form-input text-sm"></textarea>
+                            </div>
+
+                            <!-- Submission trigger -->
+                            <div class="pt-2">
+                                <button type="submit" class="w-full bg-gradient-to-r from-kn-gold to-kn-goldDark text-kn-dark font-black py-4 px-4 rounded-lg text-xs uppercase tracking-widest hover:brightness-110 active:scale-[0.98] transition shadow-lg shadow-kn-gold/15 flex justify-center items-center gap-2">
+                                    <span>Initialize Operational Audit</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Dynamic Submission Success Frame -->
+                        <div id="inpageSuccessState" class="hidden flex-col items-center justify-center py-12 text-center">
+                            <div class="w-16 h-16 border border-kn-gold text-kn-gold rounded-full flex items-center justify-center mb-6 bg-kn-gold/10">
+                                <svg class="w-8 h-8 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <h3 class="text-xl font-montserrat font-black text-white uppercase tracking-widest mb-3">Transmission Secured</h3>
+                            <p class="text-gray-400 text-xs font-light leading-relaxed max-w-xs mx-auto">
+                                Your operational profile has been securely synchronized. A technical strategist will evaluate your booking systems and contact you shortly.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-[#001212]/75 backdrop-blur-md border-t border-white/10 py-12 relative z-10 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-8 text-gray-400">
+            <!-- Left Branding -->
+            <div class="flex items-center gap-3">
+                 <span class="font-montserrat text-2xl font-black tracking-tighter text-white">KEZZA<span class="text-kn-gold">.</span></span>
+                 <div class="border-l border-white/10 pl-3">
+                     <span class="text-[10px] font-black uppercase tracking-widest text-white">Kezza Noguerra</span>
+                     <p class="text-[9px] text-gray-400 uppercase tracking-widest mt-0.5">Automated Concierge Systems</p>
+                 </div>
+            </div>
+            
+            <!-- Right Socials & Links -->
+            <div class="flex flex-col items-center md:items-end gap-5">
+                <div class="flex items-center gap-5">
+                    <!-- LinkedIn -->
+                    <a href="https://linkedin.com/in/kezzan" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-kn-gold hover:-translate-y-1 transition-transform duration-300" aria-label="LinkedIn">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                </div>
+                
+                <div class="flex gap-6 uppercase tracking-widest text-[10px] font-bold">
+                    <a href="#" class="hover:text-white transition">Executive Brief</a>
+                    <a href="#" class="hover:text-white transition">Data Security</a>
+                </div>
+                
+                <p class="text-center md:text-right">&copy; 2026 Kezza Noguerra. All Rights Reserved. Systems First. Growth Always.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- LEAD CAPTURE SYSTEM MODAL OVERLAY -->
+    <div id="leadModal" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-sm">
+        <div class="absolute inset-0" id="modalBackdrop"></div>
+        
+        <div class="modal-content relative w-full max-w-xl glass-panel rounded-xl shadow-premium overflow-hidden z-10 flex flex-col max-h-[92vh] border border-white/10">
+            <div class="h-1.5 bg-gradient-to-r from-kn-gold via-white to-kn-gold"></div>
+
+            <div class="px-8 py-6 flex justify-between items-center border-b border-white/5 bg-[#001c1c]">
+                <div>
+                    <h2 class="text-lg font-montserrat font-black text-white uppercase tracking-widest">Enterprise Request</h2>
+                    <p class="text-kn-gold text-[10px] uppercase tracking-widest mt-1 font-bold">Initiate Operational Audit Sequence</p>
+                </div>
+                <button id="closeModalBtn" class="text-gray-400 hover:text-white transition rounded-full p-2 bg-white/5 hover:bg-white/10">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <!-- Form Container body -->
+            <div class="p-8 overflow-y-auto bg-kn-dark/95">
+                <form id="consultationForm" class="space-y-5">
+                    
+                    <!-- Customer Name -->
+                    <div>
+                        <label for="firstName" class="block text-[10px] font-black uppercase tracking-widest text-kn-gold mb-1.5">Name</label>
+                        <input type="text" id="firstName" name="firstName" required placeholder="John Doe" class="form-input text-sm">
+                    </div>
+
+                    <!-- Client Company/Brand -->
+                    <div>
+                        <label for="designation" class="block text-[10px] font-black uppercase tracking-widest text-kn-gold mb-1.5">Company / Brand</label>
+                        <input type="text" id="designation" name="designation" required placeholder="e.g. Grand Oasis Resort / Boutique Stay Portfolio" class="form-input text-sm">
+                    </div>
+
+                    <!-- Market Location Selector -->
+                    <div>
+                        <label for="nationality" class="block text-[10px] font-black uppercase tracking-widest text-kn-gold mb-1.5">Location</label>
+                        <select id="nationality" name="nationality" required class="form-input text-sm text-gray-300 bg-transparent">
+                            <option value="" disabled selected class="bg-[#001212]">Select Property Location...</option>
+                            <option value="US" class="bg-[#001212]">United States</option>
+                            <option value="UK" class="bg-[#001212]">United Kingdom</option>
+                            <option value="PH" class="bg-[#001212]">Philippines</option>
+                            <option value="SG" class="bg-[#001212]">Singapore</option>
+                            <option value="AU" class="bg-[#001212]">Australia</option>
+                            <option value="CA" class="bg-[#001212]">Canada</option>
+                            <option value="AE" class="bg-[#001212]">United Arab Emirates</option>
+                            <option value="DE" class="bg-[#001212]">Germany</option>
+                            <option value="Other" class="bg-[#001212]">Other Region</option>
+                        </select>
+                    </div>
+
+                    <!-- Email & Phone Number row columns split -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                            <label for="email" class="block text-[10px] font-black uppercase tracking-widest text-kn-gold mb-1.5">Email</label>
+                            <input type="email" id="email" name="email" required placeholder="stay@yourbrand.com" class="form-input text-sm">
+                        </div>
+
+                        <div>
+                            <label for="mobile" class="block text-[10px] font-black uppercase tracking-widest text-kn-gold mb-1.5">Phone Number</label>
+                            <input type="tel" id="mobile" name="mobile" required placeholder="+1 (555) 000-0000" class="form-input text-sm">
+                        </div>
+                    </div>
+
+                    <!-- Submission trigger -->
+                    <div class="pt-4">
+                        <button type="submit" class="w-full bg-gradient-to-r from-kn-gold to-kn-goldDark text-kn-dark font-black py-4 px-4 rounded text-xs uppercase tracking-widest hover:brightness-110 active:scale-[0.98] transition shadow-lg shadow-kn-gold/15 flex justify-center items-center gap-2">
+                            <span>Initialize Operational Audit</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                        <p class="text-center text-[9px] uppercase tracking-widest text-slate-500 mt-4 flex items-center justify-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 text-kn-gold" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path></svg>
+                            Secure connection verified compliant with privacy specs
+                        </p>
+                    </div>
+                </form>
+
+                <!-- Dynamic submission success layout frame -->
+                <div id="successState" class="hidden flex-col items-center justify-center py-16 text-center">
+                    <div class="w-16 h-16 border border-kn-gold text-kn-gold rounded-full flex items-center justify-center mb-6 bg-kn-gold/10">
+                        <svg class="w-8 h-8 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-montserrat font-black text-white uppercase tracking-widest mb-3">Transmission Secured</h3>
+                    <p class="text-gray-400 text-xs font-light leading-relaxed max-w-xs">
+                        Your operational profile has been securely synchronized. A technical strategist will evaluate your booking systems and contact you shortly.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN BEHAVIOR SCRIPTS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('leadModal');
+            const openBtns = document.querySelectorAll('.open-modal-btn');
+            const closeBtn = document.getElementById('closeModalBtn');
+            const backdrop = document.getElementById('modalBackdrop');
+            const form = document.getElementById('consultationForm');
+            const successState = document.getElementById('successState');
+            
+            // In-page Form Elements
+            const inpageForm = document.getElementById('inpageConsultationForm');
+            const inpageSuccessState = document.getElementById('inpageSuccessState');
+
+            const openModal = () => {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden'; 
+                
+                form.reset();
+                form.style.display = 'block';
+                successState.classList.add('hidden');
+                successState.classList.remove('flex');
+            };
+
+            const closeModal = () => {
+                modal.classList.remove('active');
+                document.body.style.overflow = ''; 
+            };
+
+            openBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    openModal();
+                });
+            });
+
+            closeBtn.addEventListener('click', closeModal);
+            backdrop.addEventListener('click', closeModal);
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.classList.contains('active')) {
+                    closeModal();
+                }
+            });
+
+            // Modal Form Submission
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                const leadData = {
+                    firstName: formData.get('firstName'),
+                    designation: formData.get('designation'),
+                    nationality: formData.get('nationality'),
+                    email: formData.get('email'),
+                    mobile: formData.get('mobile')
+                };
+
+                console.log('Secure Modal Submission Completed:', leadData);
+
+                form.style.display = 'none';
+                successState.classList.remove('hidden');
+                successState.classList.add('flex');
+
+                setTimeout(() => {
+                    closeModal();
+                }, 3800);
+            });
+
+            // In-Page Form Submission
+            inpageForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const formData = new FormData(inpageForm);
+                const leadData = {
+                    firstName: formData.get('firstName'),
+                    designation: formData.get('designation'),
+                    nationality: formData.get('nationality'),
+                    email: formData.get('email'),
+                    mobile: formData.get('mobile'),
+                    message: formData.get('message')
+                };
+
+                console.log('Secure In-Page Inquiry Submission Completed:', leadData);
+
+                inpageForm.style.display = 'none';
+                inpageSuccessState.classList.remove('hidden');
+                inpageSuccessState.classList.add('flex');
+            });
+        });
+    </script>
+</body>
+</html>
